@@ -69,19 +69,32 @@ void Graph<V,E>::addVertex(Vertex<V,E> * vertex )
 template <class V, class E>
 void Graph<V,E>::addEdge(Vertex<V,E> * source, Vertex<V,E> * target, const E & value)
 {
-    /* Buscar vertex origen */
-    auto node = find(nodes.begin(), nodes.end(), source);
-    /* Duda aqui de si se crea una copia de node con una dic diferente */
+    Vertex<V,E> *node = nullptr;
+
+    /* Buscar nodo origen, cambio de función find in node */
+    for (auto n : nodes){
+        if ( *n == *source){
+            node = n;
+            break;
+        }
+    }
+
+    if (node == nullptr) {
+        std::cout << "Nodo no encontrado" << std::endl;
+        return;
+    }
+    /* Se crea una copia de node con otra dic o toma la dic de source ?*/
 
     /* Crear un edge y adicionarlo al vertex */
     Edge<V, E> * edge = new Edge<V,E>(value, target);
 
-    (*node)->addEdge(edge);
+    node->addEdge(edge);
 
     /* Modificar conexiones entrantes y salientes*/
-    (*node)->addConexionesSalientes();
+    node->addConexionesSalientes();
     target->addConexionesEntrantes();
 }
+
 
 template <class V, class E>
 void Graph<V,E>::removeEdge(Vertex<V,E> * source, Vertex<V,E> * target, const E & value )

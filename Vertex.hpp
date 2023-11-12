@@ -115,6 +115,8 @@ template <class V, class E>
 void Vertex<V,E>::addEdge(Edge<V,E> * edge)
 {
     edges.push_back(edge);
+
+    std::cout << "punto de verificacion 3" << std::endl;
 }
 
 template <class V, class E>

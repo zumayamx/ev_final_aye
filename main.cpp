@@ -10,6 +10,7 @@
 #include "Ordenamiento.hpp"
 #include "RegComun.hpp"
 #include "Graph.hpp"
+#include "Vertex.hpp"
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -482,6 +483,7 @@ void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
 
     /* Crear el grafo */
     Graph<std::string, std::string> * grafoIp = new Graph<std::string, std::string>();
+    std::cout << "red interna: " << redInterna << std::endl;
 
     for (int i = 0; i < bitacora.size() ; i++){
 
@@ -490,22 +492,31 @@ void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
         if (IpOrigen.find(redInterna) != std::string::npos){
 
             size_t last_dot = IpOrigen.find_last_of(".");
-            std::string IpOrigenSub = IpOrigen.substr(0, last_dot);
-            std::cout << "IpOrigenSub: " << IpOrigenSub << std::endl;
+            std::string IpOrigenSub = IpOrigen.substr(last_dot);
+            /* std::cout << "IpOrigenSub: " << IpOrigenSub << std::endl; */
 
             /* Agrega el Vertex al grafo con validación */
-            grafoIp->addVertex(IpOrigenSub);
+            Vertex<std::string, std::string> * verticeIpOrigen = new Vertex<std::string, std::string>(IpOrigenSub);
+            
+            /* Validar si el vertex ya existe */
+            if (grafoIp->search(verticeIpOrigen) == nullptr){
+                grafoIp->addVertex(verticeIpOrigen);
+            }
+            /* Search busca si vertex existe o si esta en grafo ?*/
 
             std::string IpDestino = bitacora[i].getIpDestiny();
 
             if (IpDestino.find(redInterna) != std::string::npos){
             size_t last_dot = IpDestino.find_last_of(".");
-            std::string IpDestinoSub = IpDestino.substr(0, last_dot);
-            std::cout << "IpDestinoSub: " << IpDestinoSub << std::endl;
+            std::string IpDestinoSub = IpDestino.substr(last_dot);
+            std::cout << "IpDestinoSub: " << IpDestinoSub << std::endl; 
+
+            Vertex<std::string, std::string> * verticeIpDestino = new Vertex<std::string, std::string>(IpDestinoSub);
+
+            /* Validar vertice destino ? */
 
             /*Agrega el Edge, origen, destino y peso fecha */
-            grafoIp->addEdge(IpOrigenSub, IpDestinoSub, bitacora[i].getDate());
-
+            grafoIp->addEdge(verticeIpOrigen, verticeIpDestino, bitacora[i].getDate());
 
             }
         }
@@ -639,7 +650,7 @@ int main() {
     case 15:
       std::cout << "Entrega 4-2" << std::endl;
       std::cout << "Dirección IP elegida: 10.222.50.125" << std::endl;
-      
+      red = redInterna(bitacora);
       grafoPorDia_IP(bitacora, fechas, red, "10.22.50.125");
       
       std::cout << "Grafo por fechas creado " << std::endl;
