@@ -54,6 +54,7 @@ Graph<V,E>::~Graph()
 template <class V, class E>
 void Graph<V,E>::addVertex(V & value )
 {
+    /* Validacion  de vertex que ya existe faltante */
     auto vertex = new Vertex<V, E>(value);
 
     nodes.push_back(vertex);
@@ -70,11 +71,16 @@ void Graph<V,E>::addEdge(Vertex<V,E> * source, Vertex<V,E> * target, const E & v
 {
     /* Buscar vertex origen */
     auto node = find(nodes.begin(), nodes.end(), source);
+    /* Duda aqui de si se crea una copia de node con una dic diferente */
 
     /* Crear un edge y adicionarlo al vertex */
     Edge<V, E> * edge = new Edge<V,E>(value, target);
 
     (*node)->addEdge(edge);
+
+    /* Modificar conexiones entrantes y salientes*/
+    (*node)->addConexionesSalientes();
+    target->addConexionesEntrantes();
 }
 
 template <class V, class E>
@@ -95,9 +101,12 @@ void Graph<V,E>::removeEdge(Vertex<V,E> * source, Vertex<V,E> * target, const E 
             break;
         }
     }
-
+    
+    /* Remover nodo y modificar conexiones entrantes, salientes */
     if (to_remove) {
         vertex->removeEdge(to_remove);
+        vertex->removeConexionesSalientes();
+        target->removeConexionesEntrantes();
     }
 
 }

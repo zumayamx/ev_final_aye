@@ -9,6 +9,7 @@
 #include "ConexionesComputadora.hpp"
 #include "Ordenamiento.hpp"
 #include "RegComun.hpp"
+#include "Graph.hpp"
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -474,6 +475,45 @@ void sitioConMayorFrecuencia(int topN, const std::vector<T>& fechas, std::vector
   }
 }
 
+/* Creación de grafo por dia para IP */
+/* Conexiones entre ip con red interna solamente*/
+template <class T, class K>
+void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::string redInterna, std::string IP){
+
+    /* Crear el grafo */
+    Graph<std::string, std::string> * grafoIp = new Graph<std::string, std::string>();
+
+    for (int i = 0; i < bitacora.size() ; i++){
+
+        std::string IpOrigen = bitacora[i].getipOrigin();
+        /* Verifica si la conexión pertenece a la red interna */
+        if (IpOrigen.find(redInterna) != std::string::npos){
+
+            size_t last_dot = IpOrigen.find_last_of(".");
+            std::string IpOrigenSub = IpOrigen.substr(0, last_dot);
+            std::cout << "IpOrigenSub: " << IpOrigenSub << std::endl;
+
+            /* Agrega el Vertex al grafo con validación */
+            grafoIp->addVertex(IpOrigenSub);
+
+            std::string IpDestino = bitacora[i].getIpDestiny();
+
+            if (IpDestino.find(redInterna) != std::string::npos){
+            size_t last_dot = IpDestino.find_last_of(".");
+            std::string IpDestinoSub = IpDestino.substr(0, last_dot);
+            std::cout << "IpDestinoSub: " << IpDestinoSub << std::endl;
+
+            /*Agrega el Edge, origen, destino y peso fecha */
+            grafoIp->addEdge(IpOrigenSub, IpDestinoSub, bitacora[i].getDate());
+
+
+            }
+        }
+    }      
+
+    std::cout << *grafoIp << std::endl;
+}
+
 int main() {
   // Declaración de variables y objetos
   std::vector<RegComun> bitacora;
@@ -597,11 +637,22 @@ int main() {
       sitioConMayorFrecuencia(5, fechas, bitacora);
       break;
     case 15:
-      std::cout << "Adiós!" << std::endl;
-      return 0;
-    case 16:
       std::cout << "Entrega 4-2" << std::endl;
       std::cout << "Dirección IP elegida: 10.222.50.125" << std::endl;
+      
+      grafoPorDia_IP(bitacora, fechas, red, "10.22.50.125");
+      
+      std::cout << "Grafo por fechas creado " << std::endl;
+      break;
+    case 16:
+        std::cout << "Pregunta 2" << std::endl;
+        break;
+    case 17:
+        std::cout << "Pregunta 3" << std::endl;
+        break;
+    case 18:
+        std::cout << "Adios" << std::endl;
+        return 0;
     default:
       std::cout << "Opción no válida." << std::endl;
     }

@@ -17,6 +17,8 @@ template <class V, class E>
 class Vertex {
     V info;
     std::vector< Edge<V, E> * > edges;
+    int conexionesEntrantes = 0;
+    int conexionesSalientes = 0;
 
 public:
     Vertex() {}
@@ -36,7 +38,50 @@ public:
     template <class Vn, class En>
     friend std::ostream & operator <<(std::ostream &, const Vertex<Vn, En> &);
 
+    int getConexionesEntrantes() const;
+    int getConexionesSalientes() const;
+    void addConexionesEntrantes();
+    void addConexionesSalientes();
+    void removeConexionesEntrantes();
+    void removeConexionesSalientes();
+
 };
+
+template < class V, class E>
+int Vertex<V,E>::getConexionesEntrantes() const
+{
+    return conexionesEntrantes;
+}
+
+template < class V, class E>
+int Vertex<V,E>::getConexionesSalientes() const
+{
+    return conexionesSalientes;
+}
+
+template <class V, class E>
+void Vertex<V,E>::addConexionesEntrantes()
+{
+    conexionesEntrantes++;
+}
+
+template <class V, class E>
+void Vertex<V,E>::addConexionesSalientes()
+{
+    conexionesSalientes++;
+}
+
+template <class V, class E>
+void Vertex<V,E>::removeConexionesEntrantes()
+{
+    conexionesEntrantes--;
+}
+
+template <class V, class E>
+void Vertex<V,E>::removeConexionesSalientes()
+{
+    conexionesSalientes--;
+}
 
 template <class V, class E>
 Vertex<V,E>::~Vertex()
