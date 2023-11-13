@@ -661,9 +661,9 @@ int main() {
       break;
     case 15:
       std::cout << "Entrega 4-2" << std::endl;
-      std::cout << "Dirección IP elegida: 10.222.50.125" << std::endl;
+      std::cout << "Dirección IP elegida: 10.222.50.12" << std::endl;
       red = redInterna(bitacora);
-      grafoPorDia_IP(bitacora, fechas, red, ".125");
+      grafoPorDia_IP(bitacora, fechas, red, ".25");
       
       break;
     case 16:
