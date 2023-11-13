@@ -57,7 +57,6 @@ Graph<V,E>::~Graph()
 template <class V, class E>
 void Graph<V,E>::addVertex(V & value )
 {
-    /* Validacion  de vertex que ya existe faltante */
     auto vertex = new Vertex<V, E>(value);
 
     nodes.push_back(vertex);
@@ -95,6 +94,7 @@ void Graph<V,E>::addEdge(Vertex<V,E> * source, Vertex<V,E> * target, const E & v
     /* Modificar conexiones entrantes y salientes*/
     node->addConexionesSalientes();
     target->addConexionesEntrantes();
+
 }
 
 /* Modificar remove...*/
@@ -184,7 +184,7 @@ void Graph<V,E>::maxConexionesSalientes(){
         return;
     }
     else {
-    std::cout << "El vertice con más conexiones es: " << max->getInfo() << " con: " << max->getConexionesSalientes() << std::endl;
+    std::cout << "El vertice con más conexiones salientes es: " << max->getInfo() << " con: " << max->getConexionesSalientes() << std::endl;
     }
 }
 
@@ -195,11 +195,18 @@ void Graph<V,E>::maxConexionesEntrantes(){
     for (auto v : nodes){
        int actual = v->getConexionesEntrantes();
         if (actual > maxConex){
+            maxConex = actual;
             max = v;
         }
     }
 
-    std::cout << "El vertice con menos conexiones es: " << max->getInfo() << " con: " << max->getConexionesEntrantes() << std::endl;
+    if (max == nullptr){
+        std::cout << "No hay vertices" << std::endl;
+        return;
+    }
+    else {
+    std::cout << "El vertice con más conexiones entrantes es: " << max->getInfo() << " con: " << max->getConexionesEntrantes() << std::endl;
+    }
 }
 
 

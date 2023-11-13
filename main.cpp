@@ -528,10 +528,12 @@ void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
         std::cout << "No se encontró el vertice" << std::endl;
     }
     else{
-    std::cout << "Conexiones salientes de la computadora seleccionada: " << verticeBuscado->getConexionesSalientes();
+    std::cout << "Conexiones salientes de la computadora seleccionada: " << verticeBuscado->getConexionesSalientes() << std::endl;
+    std::cout << "Conexiones entrantes de la computadora seleccionada: " << verticeBuscado->getConexionesEntrantes() << std::endl;
     }
 
     grafoIp->maxConexionesSalientes();
+    grafoIp->maxConexionesEntrantes();
 
 }
 
