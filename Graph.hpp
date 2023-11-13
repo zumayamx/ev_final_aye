@@ -34,6 +34,9 @@ public:
     size_t size() const;
     template <class Vn, class En>
     friend std::ostream & operator <<(std::ostream &, const Graph<Vn,En> &);
+
+    void maxConexionesEntrantes();
+    void maxConexionesSalientes();
 };
 
 template<class V, class E>
@@ -85,7 +88,6 @@ void Graph<V,E>::addEdge(Vertex<V,E> * source, Vertex<V,E> * target, const E & v
     }
     /* Se crea una copia de node con otra dic o toma la dic de source ?*/
 
-    /* Crear un edge y adicionarlo al vertex */
     Edge<V, E> * edge = new Edge<V,E>(value, target);
 
     node->addEdge(edge);
@@ -95,7 +97,7 @@ void Graph<V,E>::addEdge(Vertex<V,E> * source, Vertex<V,E> * target, const E & v
     target->addConexionesEntrantes();
 }
 
-
+/* Modificar remove...*/
 template <class V, class E>
 void Graph<V,E>::removeEdge(Vertex<V,E> * source, Vertex<V,E> * target, const E & value )
 {
@@ -163,6 +165,41 @@ std::ostream & operator <<(std::ostream & os, const Graph<V,E> & graph)
     }
 
     return os;
+}
+
+template <class V, class E>
+void Graph<V,E>::maxConexionesSalientes(){
+    Vertex<V,E> * max = nullptr;
+    int maxConex = 0;
+    for (auto v : nodes){
+       int actual = v->getConexionesSalientes();
+        if (actual > maxConex){
+            maxConex = actual;
+            max = v;
+        }
+    }
+
+    if (max == nullptr){
+        std::cout << "No hay vertices" << std::endl;
+        return;
+    }
+    else {
+    std::cout << "El vertice con más conexiones es: " << max->getInfo() << " con: " << max->getConexionesSalientes() << std::endl;
+    }
+}
+
+template <class V, class E>
+void Graph<V,E>::maxConexionesEntrantes(){
+    Vertex<V,E> * max = nullptr;
+    int maxConex = 0;
+    for (auto v : nodes){
+       int actual = v->getConexionesEntrantes();
+        if (actual > maxConex){
+            max = v;
+        }
+    }
+
+    std::cout << "El vertice con menos conexiones es: " << max->getInfo() << " con: " << max->getConexionesEntrantes() << std::endl;
 }
 
 

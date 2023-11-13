@@ -479,11 +479,10 @@ void sitioConMayorFrecuencia(int topN, const std::vector<T>& fechas, std::vector
 /* Creación de grafo por dia para IP */
 /* Conexiones entre ip con red interna solamente*/
 template <class T, class K>
-void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::string redInterna, std::string IP){
+void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::string redInterna, std::string ipVertex){
 
     /* Crear el grafo */
     Graph<std::string, std::string> * grafoIp = new Graph<std::string, std::string>();
-    std::cout << "red interna: " << redInterna << std::endl;
 
     for (int i = 0; i < bitacora.size() ; i++){
 
@@ -509,7 +508,7 @@ void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
             if (IpDestino.find(redInterna) != std::string::npos){
             size_t last_dot = IpDestino.find_last_of(".");
             std::string IpDestinoSub = IpDestino.substr(last_dot);
-            std::cout << "IpDestinoSub: " << IpDestinoSub << std::endl; 
+            /* std::cout << "IpDestinoSub: " << IpDestinoSub << std::endl; */
 
             Vertex<std::string, std::string> * verticeIpDestino = new Vertex<std::string, std::string>(IpDestinoSub);
 
@@ -520,9 +519,20 @@ void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
 
             }
         }
-    }      
+    }
 
-    std::cout << *grafoIp << std::endl;
+    /* std::cout << *grafoIp << std::endl; */
+
+    auto verticeBuscado = grafoIp->search(ipVertex);
+    if (verticeBuscado == nullptr){
+        std::cout << "No se encontró el vertice" << std::endl;
+    }
+    else{
+    std::cout << "Conexiones salientes de la computadora seleccionada: " << verticeBuscado->getConexionesSalientes();
+    }
+
+    grafoIp->maxConexionesSalientes();
+
 }
 
 int main() {
@@ -651,9 +661,8 @@ int main() {
       std::cout << "Entrega 4-2" << std::endl;
       std::cout << "Dirección IP elegida: 10.222.50.125" << std::endl;
       red = redInterna(bitacora);
-      grafoPorDia_IP(bitacora, fechas, red, "10.22.50.125");
+      grafoPorDia_IP(bitacora, fechas, red, ".125");
       
-      std::cout << "Grafo por fechas creado " << std::endl;
       break;
     case 16:
         std::cout << "Pregunta 2" << std::endl;
