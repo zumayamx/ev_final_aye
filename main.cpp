@@ -10,6 +10,7 @@
 #include "Ordenamiento.hpp"
 #include "RegComun.hpp"
 #include "Graph.hpp"
+#include "Edge.hpp"
 #include "Vertex.hpp"
 #include <algorithm>
 #include <fstream>
@@ -476,6 +477,22 @@ void sitioConMayorFrecuencia(int topN, const std::vector<T>& fechas, std::vector
   }
 }
 
+
+
+template <class T, class K>
+void computadorasA(std::vector<K>& fechas, Vertex<T, K> * vertexBuscado){
+
+  auto vectorEdges = vertexBuscado->getEdges();
+
+  for (auto fecha : fechas){
+    for (auto edge : *vectorEdges){
+      if (edge->getInfo() == fecha){
+        std::cout << edge->getInfo() << std::endl;
+      }
+    }
+  }
+}
+
 /* Creación de grafo por dia para IP */
 /* Conexiones entre ip con red interna solamente*/
 template <class T, class K>
@@ -498,9 +515,13 @@ void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
             Vertex<std::string, std::string> * verticeIpOrigen = new Vertex<std::string, std::string>(IpOrigenSub);
             
             /* Validar si el vertex ya existe */
-            if (grafoIp->search(verticeIpOrigen) == nullptr){
+            Vertex<std::string, std::string> * vOrigen = grafoIp->search(verticeIpOrigen);
+            if (vOrigen == nullptr){
+                vOrigen = verticeIpOrigen;
                 grafoIp->addVertex(verticeIpOrigen);
             }
+            
+            
             /* Search busca si vertex existe o si esta en grafo ?*/
 
             std::string IpDestino = bitacora[i].getIpDestiny();
@@ -511,11 +532,18 @@ void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
             /* std::cout << "IpDestinoSub: " << IpDestinoSub << std::endl; */
 
             Vertex<std::string, std::string> * verticeIpDestino = new Vertex<std::string, std::string>(IpDestinoSub);
+                
+                /* Validar si el vertex ya existe */
+                Vertex<std::string, std::string> * vDestino = grafoIp->search(verticeIpDestino);
+                if (vDestino == nullptr){
+                    vDestino = verticeIpDestino;
+                    grafoIp->addVertex(verticeIpDestino);
+                }
 
             /* Validar vertice destino ? */
 
             /*Agrega el Edge, origen, destino y peso fecha */
-            grafoIp->addEdge(verticeIpOrigen, verticeIpDestino, bitacora[i].getDate());
+            grafoIp->addEdge(vOrigen, vDestino, bitacora[i].getDate());
 
             }
         }
@@ -535,7 +563,11 @@ void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
     grafoIp->maxConexionesSalientes();
     grafoIp->maxConexionesEntrantes();
 
+    computadorasA(fechas, verticeBuscado);
+
 }
+
+
 
 int main() {
   // Declaración de variables y objetos
