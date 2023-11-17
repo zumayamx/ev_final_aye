@@ -563,7 +563,13 @@ void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
     grafoIp->maxConexionesSalientes();
     grafoIp->maxConexionesEntrantes();
 
-    computadorasA(fechas, verticeBuscado);
+    auto vectorEdges = verticeBuscado->getEdges();
+
+    for (auto edge : *vectorEdges){
+        std::cout << edge->getInfo() << std::endl;
+    }
+
+    //computadorasA(fechas, verticeBuscado);
 
 }
 
