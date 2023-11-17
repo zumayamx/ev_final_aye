@@ -91,7 +91,7 @@ std::string redInterna(const std::vector<RegComun> &bitacora) {
   if (firstOct == "10") {
     size_t thirdDot = red.find('.', red.find('.', red.find('.') + 1) + 1);
     std::string redInterna = red.substr(0, thirdDot + 1);
-    std::cout << "\tRed Interna clase A con dirección: " << redInterna
+    std::cout << "Red Interna clase A con dirección: " << redInterna
               << std::endl;
     return redInterna;
     std::cout << std::endl;
@@ -478,25 +478,72 @@ void sitioConMayorFrecuencia(int topN, const std::vector<T>& fechas, std::vector
 }
 
 
+template <class T, class K>
+void conexionesSalientes_V(std::vector<K>& fechas, std::string vertexToSearch, Graph<T,K> * grafoIp){
+
+  auto verticeBuscado = grafoIp->search(vertexToSearch);
+    if (verticeBuscado == nullptr){
+        std::cout << "No se encontró el vertice" << std::endl;
+    }
+    else{
+
+    auto vectorEdges = verticeBuscado->getEdges();
+    
+    std::map<std::string, int> edgesFechas;
+
+    for (auto fecha : fechas){
+      for (auto edge : *vectorEdges){
+        if (edge->getInfo() == fecha){
+          edgesFechas[fecha]++;
+         }
+       }
+     }
+
+     std:: cout << "Conexiones salientes de " << vertexToSearch << " por fecha: " << std::endl;
+      for (auto edge : edgesFechas){
+        std::cout << edge.first << ": " << edge.second << std::endl;
+      }
+
+    std::cout << "Conexiones salientes totales de " << vertexToSearch << ": " << verticeBuscado->getConexionesSalientes() << std::endl;
+
+   }
+}
 
 template <class T, class K>
-void computadorasA(std::vector<K>& fechas, Vertex<T, K> * vertexBuscado){
+void conexionesEntrantes_V(std::vector<K>& fechas, std::string vertexToSearch, Graph<T,K> * grafoIp){
 
-  auto vectorEdges = vertexBuscado->getEdges();
-
-  for (auto fecha : fechas){
-    for (auto edge : *vectorEdges){
-      if (edge->getInfo() == fecha){
-        std::cout << edge->getInfo() << std::endl;
-      }
+  auto verticeBuscado = grafoIp->search(vertexToSearch);
+    if (verticeBuscado == nullptr){
+        std::cout << "No se encontró el vertice" << std::endl;
     }
-  }
+    else{
+
+    auto vectorEdges = verticeBuscado->getEdgesEntrantes();
+    
+    std::map<std::string, int> edgesFechas;
+
+    for (auto fecha : fechas){
+      for (auto edge : *vectorEdges){
+        if (edge->getInfo() == fecha){
+          edgesFechas[fecha]++;
+         }
+       }
+     }
+
+     std:: cout << "Conexiones entrantes de " << vertexToSearch << " por fecha: " << std::endl;
+      for (auto edge : edgesFechas){
+        std::cout << edge.first << ": " << edge.second << std::endl;
+      }
+
+    std::cout << "Conexiones entrantes totales de " << vertexToSearch << ": " << verticeBuscado->getConexionesEntrantes() << std::endl;
+
+   }
 }
 
 /* Creación de grafo por dia para IP */
 /* Conexiones entre ip con red interna solamente*/
 template <class T, class K>
-void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::string redInterna, std::string ipVertex){
+void grafoIP(std::vector<T>& bitacora, std::vector<K>& fechas, std::string redInterna, std::string ipVertex){
 
     /* Crear el grafo */
     Graph<std::string, std::string> * grafoIp = new Graph<std::string, std::string>();
@@ -540,9 +587,6 @@ void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
                     grafoIp->addVertex(verticeIpDestino);
                 }
 
-            /* Validar vertice destino ? */
-
-            /*Agrega el Edge, origen, destino y peso fecha */
             grafoIp->addEdge(vOrigen, vDestino, bitacora[i].getDate());
 
             }
@@ -550,31 +594,15 @@ void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
     }
 
     /* std::cout << *grafoIp << std::endl; */
-
-    auto verticeBuscado = grafoIp->search(ipVertex);
-    if (verticeBuscado == nullptr){
-        std::cout << "No se encontró el vertice" << std::endl;
-    }
-    else{
-    std::cout << "Conexiones salientes de la computadora seleccionada: " << verticeBuscado->getConexionesSalientes() << std::endl;
-    std::cout << "Conexiones entrantes de la computadora seleccionada: " << verticeBuscado->getConexionesEntrantes() << std::endl;
-    }
-
+    conexionesSalientes_V(fechas, ipVertex, grafoIp);
     grafoIp->maxConexionesSalientes();
-    grafoIp->maxConexionesEntrantes();
-
-    auto vectorEdges = verticeBuscado->getEdgesEntrantes();
-
-    for (auto edge : *vectorEdges){
-        std::cout << edge->getInfo() << std::endl;
-    }
-
+    conexionesEntrantes_V(fechas, ipVertex, grafoIp);
+    
     delete grafoIp;
-    //computadorasA(fechas, verticeBuscado);
 }
 
 template <class T, class K>
-void grafoSitiosWeb(std::vector<T>& bitacora, std::vector<K>& fechas, std::string sitioRaro){
+void grafoSitiosWeb(std::vector<T>& bitacora, std::vector<K>& fechas, std::string sitioRaro, std::string sitioConMasconexiones){
 
   Graph<std::string, std::string> * grafoSitios = new Graph<std::string, std::string>();
 
@@ -607,25 +635,11 @@ void grafoSitiosWeb(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
 
     }
   }
+
   //std::cout << * grafoSitios << std::endl;
-
-  auto verticeBuscado = grafoSitios->search(sitioRaro);
-  if (verticeBuscado == nullptr){
-    std::cout << "No se encontró el vertice" << std::endl;
-  }
-  else{
-    std::cout << "Conexiones salientes de la computadora seleccionada: " << verticeBuscado->getConexionesSalientes() << std::endl;
-    std::cout << "Conexiones entrantes de la computadora seleccionada: " << verticeBuscado->getConexionesEntrantes() << std::endl;
-  }
-
-  grafoSitios->maxConexionesSalientes();
-  grafoSitios->maxConexionesEntrantes();
-
-  auto vectorEdges = verticeBuscado->getEdgesEntrantes();
-
-  for (auto edge : *vectorEdges){
-    std::cout << edge->getInfo() << std::endl;
-  }
+  conexionesEntrantes_V(fechas, sitioRaro, grafoSitios);
+  conexionesEntrantes_V(fechas, sitioConMasconexiones, grafoSitios);
+  conexionesSalientes_V(fechas, sitioConMasconexiones, grafoSitios);
 
   delete grafoSitios;
 }
@@ -646,6 +660,8 @@ int main() {
   std::vector<std::string> fechas;
   std::string sitioT;
   std::string sitioB;
+  std::string sitioC;
+  std::string ipA;
 
   // Apertura, lectura y procesamiento del archivo CSV
   fileBitacora.open("equipo12.csv");
@@ -755,17 +771,20 @@ int main() {
       sitioConMayorFrecuencia(5, fechas, bitacora);
       break;
     case 15:
-      std::cout << "Entrega 4-2" << std::endl;
-      std::cout << "Dirección IP elegida: 10.222.50.12" << std::endl;
+      std::cout << "Pregunta 1 y 2" << std::endl;
+      ipA = ".25";
+      std::cout << "Dirección IP elegida: 10.222.50" << ipA << std::endl;
       red = redInterna(bitacora);
-      grafoPorDia_IP(bitacora, fechas, red, ".25");
+      grafoIP(bitacora, fechas, red, ipA);
       
       break;
     case 16:
-        std::cout << "Pregunta 2" << std::endl;
+        std::cout << "Pregunta 3" << std::endl;
         sitioB = "d9m4ssttaj1zte5bldt5.xxx";
-        std::cout << "sitio elegido: " << sitioB << std::endl;
-        grafoSitiosWeb(bitacora, fechas, sitioB);
+        sitioC = "gmail.com";
+        std::cout << "sitio elegido B: " << sitioB << std::endl;
+        std::cout << "sitio elegido C: " << sitioC << std::endl;
+        grafoSitiosWeb(bitacora, fechas, sitioB, sitioC);
         break;
     case 17:
         std::cout << "Pregunta 3" << std::endl;
