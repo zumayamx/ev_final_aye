@@ -781,7 +781,7 @@ int main() {
     case 16:
         std::cout << "Pregunta 3" << std::endl;
         sitioB = "d9m4ssttaj1zte5bldt5.xxx";
-        sitioC = "gmail.com";
+        sitioC = "craigslist.org"; /*verficar este sitio */
         std::cout << "sitio elegido B: " << sitioB << std::endl;
         std::cout << "sitio elegido C: " << sitioC << std::endl;
         grafoSitiosWeb(bitacora, fechas, sitioB, sitioC);
