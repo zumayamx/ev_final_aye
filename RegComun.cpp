@@ -15,6 +15,9 @@
   std::string RegComun::getIpDestiny() const{
     return ipDestiny;
   }
+  std::string RegComun::getPortOrigin() const{
+    return originPort;
+  }
   std::string RegComun::getNameDestiny() const{
     return nameDestiny;
   }

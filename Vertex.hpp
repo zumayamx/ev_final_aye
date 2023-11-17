@@ -17,6 +17,7 @@ template <class V, class E>
 class Vertex {
     V info;
     std::vector< Edge<V, E> * > edges;
+    std::vector< Edge<V, E> * > edgesEntrantes;
     int conexionesEntrantes = 0;
     int conexionesSalientes = 0;
 
@@ -29,8 +30,10 @@ public:
     void setInfo(const V &);
 
     std::vector< Edge<V,E> * > * getEdges();
+    std::vector< Edge<V,E> * > * getEdgesEntrantes();
 
     void addEdge(Edge<V,E> *);
+    void addEdgeEntrante(Edge<V,E> *);
     void removeEdge(Edge<V,E> *);
 
     bool operator ==(const Vertex<V,E> &);
@@ -116,6 +119,19 @@ void Vertex<V,E>::addEdge(Edge<V,E> * edge)
 {
     edges.push_back(edge);
 }
+
+template <class V, class E>
+std::vector< Edge<V,E> * > * Vertex<V, E>::getEdgesEntrantes()
+{
+    return &edgesEntrantes;
+}
+
+template <class V, class E>
+void Vertex<V,E>::addEdgeEntrante(Edge<V,E> * edge)
+{
+    edgesEntrantes.push_back(edge);
+}
+
 
 template <class V, class E>
 void Vertex<V,E>::removeEdge(Edge<V,E> * edge)

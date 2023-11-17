@@ -90,6 +90,7 @@ void Graph<V,E>::addEdge(Vertex<V,E> * source, Vertex<V,E> * target, const E & v
     Edge<V, E> * edge = new Edge<V,E>(value, target);
 
     node->addEdge(edge);
+    target->addEdgeEntrante(edge);
 
     /* Modificar conexiones entrantes y salientes*/
     node->addConexionesSalientes();

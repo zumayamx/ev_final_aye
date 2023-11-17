@@ -15,6 +15,7 @@
   static bool compareNameAsc(RegComun, RegComun);
   std::string getDate() const;
   std::string getNameOrigin() const;
+  std::string getPortOrigin() const;
   std::string getipOrigin() const;
   std::string getIpDestiny() const;
   std::string getNameDestiny() const;

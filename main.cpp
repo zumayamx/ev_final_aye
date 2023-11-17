@@ -563,16 +563,72 @@ void grafoPorDia_IP(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
     grafoIp->maxConexionesSalientes();
     grafoIp->maxConexionesEntrantes();
 
-    auto vectorEdges = verticeBuscado->getEdges();
+    auto vectorEdges = verticeBuscado->getEdgesEntrantes();
 
     for (auto edge : *vectorEdges){
         std::cout << edge->getInfo() << std::endl;
     }
 
+    delete grafoIp;
     //computadorasA(fechas, verticeBuscado);
-
 }
 
+template <class T, class K>
+void grafoSitiosWeb(std::vector<T>& bitacora, std::vector<K>& fechas, std::string sitioRaro){
+
+  Graph<std::string, std::string> * grafoSitios = new Graph<std::string, std::string>();
+
+  for (int i = 0; i < bitacora.size() ; i++){
+    std::string sitioOrigen = bitacora[i].getNameOrigin();
+
+    if (bitacora[i].getDestinyPort() == "443" || bitacora[i].getDestinyPort() == "80"){
+
+      Vertex<std::string, std::string> * verticeSitioOrigen = new Vertex<std::string, std::string>(sitioOrigen);
+
+      Vertex<std::string, std::string> * vOrigen = grafoSitios->search(verticeSitioOrigen);
+
+      if (vOrigen == nullptr){
+        vOrigen = verticeSitioOrigen;
+        grafoSitios->addVertex(vOrigen);
+      }
+
+      std::string sitioDestino = bitacora[i].getNameDestiny();
+
+      Vertex<std::string, std::string> * verticeSitioDestino = new Vertex<std::string, std::string>(sitioDestino);
+
+      Vertex<std::string, std::string> * vDestino = grafoSitios->search(verticeSitioDestino);
+
+      if (vDestino == nullptr){
+        vDestino = verticeSitioDestino;
+        grafoSitios->addVertex(vDestino);
+      }
+
+      grafoSitios->addEdge(vOrigen, vDestino, bitacora[i].getDate());
+
+    }
+  }
+  //std::cout << * grafoSitios << std::endl;
+
+  auto verticeBuscado = grafoSitios->search(sitioRaro);
+  if (verticeBuscado == nullptr){
+    std::cout << "No se encontró el vertice" << std::endl;
+  }
+  else{
+    std::cout << "Conexiones salientes de la computadora seleccionada: " << verticeBuscado->getConexionesSalientes() << std::endl;
+    std::cout << "Conexiones entrantes de la computadora seleccionada: " << verticeBuscado->getConexionesEntrantes() << std::endl;
+  }
+
+  grafoSitios->maxConexionesSalientes();
+  grafoSitios->maxConexionesEntrantes();
+
+  auto vectorEdges = verticeBuscado->getEdgesEntrantes();
+
+  for (auto edge : *vectorEdges){
+    std::cout << edge->getInfo() << std::endl;
+  }
+
+  delete grafoSitios;
+}
 
 
 int main() {
@@ -589,6 +645,7 @@ int main() {
   std::string fecha;
   std::vector<std::string> fechas;
   std::string sitioT;
+  std::string sitioB;
 
   // Apertura, lectura y procesamiento del archivo CSV
   fileBitacora.open("equipo12.csv");
@@ -706,6 +763,9 @@ int main() {
       break;
     case 16:
         std::cout << "Pregunta 2" << std::endl;
+        sitioB = "d9m4ssttaj1zte5bldt5.xxx";
+        std::cout << "sitio elegido: " << sitioB << std::endl;
+        grafoSitiosWeb(bitacora, fechas, sitioB);
         break;
     case 17:
         std::cout << "Pregunta 3" << std::endl;
