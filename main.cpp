@@ -771,7 +771,7 @@ int main() {
       sitioConMayorFrecuencia(5, fechas, bitacora);
       break;
     case 15:
-      std::cout << "Pregunta 1 y 2" << std::endl;
+      std::cout << "Respuesta pregunta 1 y 2" << std::endl;
       ipA = ".25";
       std::cout << "Dirección IP elegida: 10.222.50" << ipA << std::endl;
       red = redInterna(bitacora);
@@ -779,7 +779,7 @@ int main() {
       
       break;
     case 16:
-        std::cout << "Pregunta 3" << std::endl;
+        std::cout << "Respuesta pregunta 3 y4 " << std::endl;
         sitioB = "d9m4ssttaj1zte5bldt5.xxx";
         sitioC = "craigslist.org"; /*verficar este sitio */
         std::cout << "sitio elegido B: " << sitioB << std::endl;
