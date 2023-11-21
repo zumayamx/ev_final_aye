@@ -785,11 +785,9 @@ int main() {
         std::cout << "sitio elegido B: " << sitioB << std::endl;
         std::cout << "sitio elegido C: " << sitioC << std::endl;
         grafoSitiosWeb(bitacora, fechas, sitioB, sitioC);
+
         break;
     case 17:
-        std::cout << "Pregunta 3" << std::endl;
-        break;
-    case 18:
         std::cout << "Adios" << std::endl;
         return 0;
     default:
