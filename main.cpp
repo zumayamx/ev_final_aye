@@ -706,7 +706,9 @@ int main() {
     std::cout << "12. Sitio en el top 5 todos los días " << std::endl;
     std::cout << "13. Sitio que entre al top 5 y permanezca" << std::endl;
     std::cout << "14. Sitio en el top 5 con más trafico que lo normal" << std::endl;
-    std::cout << "15. Salir" << std::endl;
+    std::cout << "15. Respuesta pregunta 1 y 2" << std::endl;
+    std::cout << "16. Respuesta pregunta 3 y 4" << std::endl;
+    std::cout << "17. Salir" << std::endl;
     std::cout << "Opción: ";
 
     int opcion;
