@@ -645,6 +645,83 @@ void grafoSitiosWeb(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
 }
 
 
+template <class T, class K>
+void mapSitiosAndIp(std::vector<T>& bitacora, std::vector<K>& fechas){
+  std::map<std::string, std::string> sitiosAndIp;
+
+  for(int i = 0; i < bitacora.size() ; ++i){
+    std::string sitioOrigen = bitacora[i].getNameOrigin();
+    std::string sitioDestino = bitacora[i].getNameDestiny();
+
+    if(sitioOrigen.find("reto.com") == std::string::npos && sitioOrigen != "-"){
+      sitiosAndIp[sitioOrigen] = bitacora[i].getipOrigin();
+    }
+
+    if (sitioDestino.find("reto.com") == std::string::npos && sitioDestino != "-"){
+      sitiosAndIp[sitioDestino] = bitacora[i].getIpDestiny();
+    }
+
+  }
+
+  /* Imprimir el map */
+  for (auto sitio : sitiosAndIp){
+    std::cout << sitio.first << ": " << sitio.second << std::endl;
+  }
+}
+
+template <class T, class K>
+void mapIpAndConexiones(std::vector<T>& bitacora, std::vector<K>& fechas){
+  std::map<std::string, int> ipAndConexiones;
+
+  for(int i = 0; i < bitacora.size() ; ++i){
+    std::string ipOrigen = bitacora[i].getipOrigin();
+    std::string ipDestino = bitacora[i].getIpDestiny();
+
+    if(ipOrigen != "-"){
+      ipAndConexiones[ipOrigen]++;
+    }
+
+    if (ipDestino != "-"){
+      ipAndConexiones[ipDestino]++;
+    }
+
+  }
+  /* No importa si se encuentra en origen o destino cuenta todas?*/
+  /* Imprimir el map */
+  for (auto ip : ipAndConexiones){
+    std::cout << ip.first << ": " << ip.second << std::endl;
+  }
+}
+
+template <class T>
+void mapIpAndObjeto(std::vector<T>& bitacora) {
+    std::map<std::string, ConexionesComputadora<T>> ipAndObjeto;
+
+    for (int i = 0; i < bitacora.size() ; ++i){
+        std::string ipOrigen = bitacora[i].getipOrigin();
+        std::string ipDestino = bitacora[i].getIpDestiny();
+
+        if (ipAndObjeto.find(ipOrigen) == ipAndObjeto.end()) {
+            ConexionesComputadora<T> computadoraOrigen(ipOrigen, bitacora[i].getNameOrigin());
+            computadoraOrigen.llenarConexiones(bitacora);
+            ipAndObjeto[ipOrigen] = computadoraOrigen;
+        }
+
+        if (ipAndObjeto.find(ipDestino) == ipAndObjeto.end()) {
+            ConexionesComputadora<T> computadoraDestino(ipDestino, bitacora[i].getNameDestiny());
+            computadoraDestino.llenarConexiones(bitacora);
+            ipAndObjeto[ipDestino] = computadoraDestino;
+        }
+    }
+
+    for (auto& ip : ipAndObjeto){
+        std::cout << ip.first << ": " << ip.second.totalConexionesEntrantes() << std::endl;
+    }
+}
+
+
+
+
 int main() {
   // Declaración de variables y objetos
   std::vector<RegComun> bitacora;
@@ -789,7 +866,17 @@ int main() {
         grafoSitiosWeb(bitacora, fechas, sitioB, sitioC);
 
         break;
+    
     case 17:
+      std::cout << "Map sitios y conexiones" <<std::endl;
+      mapSitiosAndIp(bitacora, fechas);
+
+      break;
+    case 18:
+      std::cout << "Map ip y conexiones" <<std::endl;
+      mapIpAndObjeto(bitacora);
+      break;
+    case 19:
         std::cout << "Adios" << std::endl;
         return 0;
     default:

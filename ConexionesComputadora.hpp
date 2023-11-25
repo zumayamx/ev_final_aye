@@ -3,6 +3,7 @@
 #include "Stack.hpp"
 #include "LinkedList.hpp"
 #include "RegComun.hpp"
+#include "Queue.hpp"
 #include <vector>
 #include <iostream>
 #include <string>
@@ -16,7 +17,7 @@ private:
   std::string IP;
   std::string name;
   Stack<T> * conexionesEntrantes = new Stack<T>(); 
-  LinkedList<T> * conexionesSalientes = new LinkedList<T>();
+  Queue<T> * conexionesSalientes = new Queue<T>();
   
 
 public:
@@ -27,7 +28,7 @@ public:
   int totalConexionesEntrantes();
   int totalConexionesSalientes();
   Stack<T> * getConexionesEntrantes();
-  LinkedList<T> * getConexionesSalientes();
+  Queue<T> * getConexionesSalientes();
   T ultimaConexionEntrante();
   Node<T> * tresConexionesConsecutivas();
 //  Map<T, K> conexionesPorDia(std::string date);
@@ -40,7 +41,7 @@ void ConexionesComputadora<T>::llenarConexiones(std::vector<T> registro)
   for (auto objeto : registro){
     if (objeto.getipOrigin() == IP)
     {
-      conexionesSalientes->insert_back(objeto);
+      conexionesSalientes->enqueue(objeto);
     }
     else if (objeto.getIpDestiny() == IP)
     {
@@ -65,7 +66,7 @@ int ConexionesComputadora<T>::totalConexionesSalientes(){
 }
 
 template<class T>
-LinkedList<T> * ConexionesComputadora<T>::getConexionesSalientes(){
+Queue<T> * ConexionesComputadora<T>::getConexionesSalientes(){
   return conexionesSalientes;
 }
 

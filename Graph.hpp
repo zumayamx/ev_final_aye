@@ -37,6 +37,7 @@ public:
 
     void maxConexionesEntrantes();
     void maxConexionesSalientes();
+   // void BFS(this->Graph, V & nodeBegin);
 };
 
 template<class V, class E>
@@ -210,5 +211,37 @@ void Graph<V,E>::maxConexionesEntrantes(){
     }
 }
 
+//Función recorrido en anchura (BFS) en el grafo a partir de un nodo dado
+
+/*
+template <class V, class E>
+void Graph<V, E>::BFS(this->Graph, V & nodeBegin) {
+
+  std::cout << "Algoritmo BFS aplicado al grafo : " << std::endl;
+  std::vector<bool> visited(graph->size(), false);
+
+  std::queue<int> queue;
+
+  visited[u] = true;
+  queue.push(u);
+
+  while (!queue.empty()) {
+    u = queue.front();
+    std::cout << " ---> " << u << " ";
+    queue.pop();
+
+    Vertex<int, int> *vertex = graph->search(u);
+    auto edges = vertex->getEdges();
+
+    for (auto edge : *edges) {
+      int target = edge->getTarget()->getInfo();
+      if (!visited[target]) {
+        visited[target] = true;
+        queue.push(target);
+      }
+    }
+  }
+}// Complejidad: O(v + e)
+*/
 
 #endif /* Graph_hpp */
