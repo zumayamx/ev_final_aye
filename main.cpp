@@ -12,6 +12,8 @@
 #include "Graph.hpp"
 #include "Edge.hpp"
 #include "Vertex.hpp"
+#include "Stack.hpp" 
+#include "Queue.hpp"
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -21,6 +23,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
 
 // NÚMERO DE REGISTROS
 //  Elaborado por: José Manuel García
@@ -645,8 +648,8 @@ void grafoSitiosWeb(std::vector<T>& bitacora, std::vector<K>& fechas, std::strin
 }
 
 
-template <class T, class K>
-void mapSitiosAndIp(std::vector<T>& bitacora, std::vector<K>& fechas){
+template <class T>
+std::map<std::string, std::string> mapSitiosAndIp(std::vector<T>& bitacora){
   std::map<std::string, std::string> sitiosAndIp;
 
   for(int i = 0; i < bitacora.size() ; ++i){
@@ -659,42 +662,25 @@ void mapSitiosAndIp(std::vector<T>& bitacora, std::vector<K>& fechas){
 
     if (sitioDestino.find("reto.com") == std::string::npos && sitioDestino != "-"){
       sitiosAndIp[sitioDestino] = bitacora[i].getIpDestiny();
-    }
+    } 
 
   }
 
-  /* Imprimir el map */
+  /* Imprimir el map para inspección visual */
   for (auto sitio : sitiosAndIp){
     std::cout << sitio.first << ": " << sitio.second << std::endl;
   }
+
+  std::string sitioRaro = "d9m4ssttaj1zte5bldt5.xxx";
+  /*Se encunetra la IP del sitio raro en complejidad constante */
+  std::cout << "Dirección IP del sitio raro: " << sitiosAndIp[sitioRaro] << std::endl;
+
+  return sitiosAndIp;
 }
+
 
 template <class T, class K>
-void mapIpAndConexiones(std::vector<T>& bitacora, std::vector<K>& fechas){
-  std::map<std::string, int> ipAndConexiones;
-
-  for(int i = 0; i < bitacora.size() ; ++i){
-    std::string ipOrigen = bitacora[i].getipOrigin();
-    std::string ipDestino = bitacora[i].getIpDestiny();
-
-    if(ipOrigen != "-"){
-      ipAndConexiones[ipOrigen]++;
-    }
-
-    if (ipDestino != "-"){
-      ipAndConexiones[ipDestino]++;
-    }
-
-  }
-  /* No importa si se encuentra en origen o destino cuenta todas?*/
-  /* Imprimir el map */
-  for (auto ip : ipAndConexiones){
-    std::cout << ip.first << ": " << ip.second << std::endl;
-  }
-}
-
-template <class T>
-void mapIpAndObjeto(std::vector<T>& bitacora) {
+std::map<K, ConexionesComputadora<T>> mapIpAndObjeto(std::vector<T>& bitacora, K redInterna) {
     std::map<std::string, ConexionesComputadora<T>> ipAndObjeto;
 
     for (int i = 0; i < bitacora.size() ; ++i){
@@ -714,10 +700,107 @@ void mapIpAndObjeto(std::vector<T>& bitacora) {
         }
     }
 
+  /*
     for (auto& ip : ipAndObjeto){
-        std::cout << ip.first << ": " << ip.second.totalConexionesEntrantes() << std::endl;
+        std::cout << ip.first << ": " << ip.second.totalConexionesSalientes() << std::endl;
     }
+    */
+
+   std::map<std::string, ConexionesComputadora<T>> conexionesEntrantes;
+
+   for (auto& ip : ipAndObjeto){
+    std::string ip_buscada = ip.first;
+
+    if (ip_buscada.find(redInterna) != std::string::npos){
+
+      if (ip.second.totalConexionesEntrantes() > 0){
+        conexionesEntrantes[ip.first] = ip.second;
+      }
+    }
+   }
+
+  std::cout << "Computadoras con más de una conexion entrante pertenecientes a reto.com: " << conexionesEntrantes.size() << std::endl;
+
+  return conexionesEntrantes;
+    
 }
+
+template <class T, class K>
+void mapIpUnicasConexiones(std::vector<T>& bitacora, K redInterna){
+  std::map < std::string, ConexionesComputadora<T>> ipAndObjeto;
+
+  for (int i = 0; i < bitacora.size(); ++i){
+    std::string ipOrigen = bitacora[i].getipOrigin();
+    std::string ipDestino = bitacora[i].getIpDestiny();
+    std::string puertoOrigen = bitacora[i].getPortOrigin();
+    std::string puertoDestino = bitacora[i].getDestinyPort();
+
+    if ((ipOrigen != "-" && ipOrigen.find(redInterna) == std::string::npos) && (puertoDestino != "67" || puertoDestino != "68")){
+      if (ipAndObjeto.find(ipOrigen) == ipAndObjeto.end()){
+        ConexionesComputadora<T> computadoraOrigen(ipOrigen, bitacora[i].getNameOrigin());
+        computadoraOrigen.llenarConexiones(bitacora);
+        ipAndObjeto[ipOrigen] = computadoraOrigen;
+      }
+    }
+
+    if ((ipDestino != "-" && ipDestino.find(redInterna) == std::string::npos) && (puertoOrigen != "67" || puertoOrigen != "68")){
+      if (ipAndObjeto.find(ipDestino) == ipAndObjeto.end()){
+        ConexionesComputadora<T> computadoraDestino(ipDestino, bitacora[i].getNameDestiny());
+        computadoraDestino.llenarConexiones(bitacora);
+        ipAndObjeto[ipDestino] = computadoraDestino;
+      }
+    }
+  }
+
+  std::cout << "Map IP que no pertenecen a reto.com ni servidor DHCP " << std::endl;
+
+  for (auto& ip : ipAndObjeto){
+    std::cout << ip.first << ": " << ip.second.totalConexionesEntrantes() << std::endl;
+  }
+
+  std::set < std::string > ipUnicas;
+
+  for (int j = 0; j < 6 ; j++){
+    Stack<T> * conexionesEntrantes = new Stack<T>();
+    conexionesEntrantes = ipAndObjeto.begin()->second.getConexionesEntrantes();
+
+    while (!conexionesEntrantes->empty()){
+      auto ip = conexionesEntrantes->top()->getInfo().getipOrigin();
+      ipUnicas.insert(ip);
+      conexionesEntrantes->pop();
+    }
+
+    typename std::map<std::string, ConexionesComputadora<T>> ::iterator it = ipAndObjeto.begin();
+    ipAndObjeto.erase(it);
+  }
+  std::cout << std::endl;
+  std::cout << "Ip únicas entrantes a computadoras que no pertenecen a reto.com ni servidor DHCP: " << std::endl;
+  for (auto& ip : ipUnicas){
+    std::cout << ip << std::endl;
+  }
+
+  std::map<std::string, std::string> sitiosAndIpRaro = mapSitiosAndIp(bitacora);
+
+  std::map<K, ConexionesComputadora<T>> conexionesEntrantesSitiosReto = mapIpAndObjeto(bitacora, redInterna);
+
+  for (auto& ip : ipUnicas){
+    for (auto& ipReto : conexionesEntrantesSitiosReto){
+      if (ip == ipReto.first){
+        Queue<T> * conexionesSalientes = new Queue<T>();
+        conexionesSalientes = ipReto.second.getConexionesSalientes();
+        while (!conexionesSalientes->empty()){
+          auto sitio = conexionesSalientes->last()->getInfo().getIpDestiny();
+          if (sitiosAndIpRaro.find(sitio) != sitiosAndIpRaro.end()){
+            std::cout << "La ip reto: " << ip << " se conecto al sitio:  " << sitiosAndIpRaro[sitio] << std::endl;
+          }
+          conexionesSalientes->dequeue();
+        }
+      }
+    }
+  }
+  
+}
+
 
 
 
@@ -864,19 +947,24 @@ int main() {
         std::cout << "sitio elegido B: " << sitioB << std::endl;
         std::cout << "sitio elegido C: " << sitioC << std::endl;
         grafoSitiosWeb(bitacora, fechas, sitioB, sitioC);
-
         break;
     
     case 17:
-      std::cout << "Map sitios y conexiones" <<std::endl;
-      mapSitiosAndIp(bitacora, fechas);
+      std::cout << "Map sitios y IP" <<std::endl;
+      //mapSitiosAndIp(bitacora, fechas);
 
       break;
     case 18:
       std::cout << "Map ip y conexiones" <<std::endl;
-      mapIpAndObjeto(bitacora);
+      red=redInterna(bitacora);
+      //mapIpAndObjeto(bitacora, red);
       break;
     case 19:
+      std::cout << "Map ip unicas y conexiones" <<std::endl;
+      red=redInterna(bitacora);
+      mapIpUnicasConexiones(bitacora, red);
+      break;
+    case 20:
         std::cout << "Adios" << std::endl;
         return 0;
     default:
