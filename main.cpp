@@ -789,11 +789,15 @@ void mapIpUnicasConexiones(std::vector<T>& bitacora, K redInterna){
         Queue<T> * conexionesSalientes = new Queue<T>();
         conexionesSalientes = ipReto.second.getConexionesSalientes();
         while (!conexionesSalientes->empty()){
-          auto sitio = conexionesSalientes->last()->getInfo().getIpDestiny();
-          if (sitiosAndIpRaro.find(sitio) != sitiosAndIpRaro.end()){
-            std::cout << "La ip reto: " << ip << " se conecto al sitio:  " << sitiosAndIpRaro[sitio] << std::endl;
-          }
+          auto sitio = conexionesSalientes->first()->getInfo().getIpDestiny();
+          auto fecha = conexionesSalientes->first()->getInfo().getDate();
           conexionesSalientes->dequeue();
+          if (sitiosAndIpRaro.find(sitio) != sitiosAndIpRaro.end()){
+            std::cout << "La IP de la red interna: " << ip << " se conecto con la IP:  " << sitiosAndIpRaro[sitio] << " que pertenece al sitio: " << sitio << std::endl;
+            std::cout << "siendo la primera conexión el día: " << fecha << std::endl;
+            break;
+          }
+          //conexionesSalientes->dequeue();
         }
       }
     }
