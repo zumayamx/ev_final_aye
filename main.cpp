@@ -735,7 +735,7 @@ void mapIpUnicasConexiones(std::vector<T>& bitacora, K redInterna){
     std::string puertoOrigen = bitacora[i].getPortOrigin();
     std::string puertoDestino = bitacora[i].getDestinyPort();
 
-    if ((ipOrigen != "-" && ipOrigen.find(redInterna) == std::string::npos) && (puertoDestino != "67" || puertoDestino != "68")){
+    if ((ipOrigen != "-" && ipOrigen.find("server.reto.com") == std::string::npos) && (puertoDestino != "67" || puertoDestino != "68")){
       if (ipAndObjeto.find(ipOrigen) == ipAndObjeto.end()){
         ConexionesComputadora<T> computadoraOrigen(ipOrigen, bitacora[i].getNameOrigin());
         computadoraOrigen.llenarConexiones(bitacora);
@@ -743,7 +743,7 @@ void mapIpUnicasConexiones(std::vector<T>& bitacora, K redInterna){
       }
     }
 
-    if ((ipDestino != "-" && ipDestino.find(redInterna) == std::string::npos) && (puertoOrigen != "67" || puertoOrigen != "68")){
+    if ((ipDestino != "-" && ipDestino.find("server.reto.com") == std::string::npos) && (puertoOrigen != "67" || puertoOrigen != "68")){
       if (ipAndObjeto.find(ipDestino) == ipAndObjeto.end()){
         ConexionesComputadora<T> computadoraDestino(ipDestino, bitacora[i].getNameDestiny());
         computadoraDestino.llenarConexiones(bitacora);
@@ -752,7 +752,7 @@ void mapIpUnicasConexiones(std::vector<T>& bitacora, K redInterna){
     }
   }
 
-  std::cout << "Map IP que no pertenecen a reto.com ni servidor DHCP " << std::endl;
+  std::cout << "Map IP que no son server.reto.com ni servidor DHCP " << std::endl;
 
   for (auto& ip : ipAndObjeto){
     std::cout << ip.first << ": " << ip.second.totalConexionesEntrantes() << std::endl;
@@ -791,13 +791,14 @@ void mapIpUnicasConexiones(std::vector<T>& bitacora, K redInterna){
         while (!conexionesSalientes->empty()){
           auto sitio = conexionesSalientes->first()->getInfo().getIpDestiny();
           auto fecha = conexionesSalientes->first()->getInfo().getDate();
+          auto puerto = conexionesSalientes->first()->getInfo().getDestinyPort();
           conexionesSalientes->dequeue();
           if (sitiosAndIpRaro.find(sitio) != sitiosAndIpRaro.end()){
             std::cout << "La IP de la red interna: " << ip << " se conecto con la IP:  " << sitiosAndIpRaro[sitio] << " que pertenece al sitio: " << sitio << std::endl;
             std::cout << "siendo la primera conexión el día: " << fecha << std::endl;
+            std::cout << "Mediante el puerto: " << puerto << std::endl;
             break;
           }
-          //conexionesSalientes->dequeue();
         }
       }
     }
