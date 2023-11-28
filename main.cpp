@@ -667,13 +667,14 @@ std::map<std::string, std::string> mapSitiosAndIp(std::vector<T>& bitacora){
   }
 
   /* Imprimir el map para inspección visual */
+  std::cout << "Map de sitios raros y direcciones IP: " << std::endl;
   for (auto sitio : sitiosAndIp){
     std::cout << sitio.first << ": " << sitio.second << std::endl;
   }
 
   std::string sitioRaro = "d9m4ssttaj1zte5bldt5.xxx";
   /*Se encunetra la IP del sitio raro en complejidad constante */
-  std::cout << "Dirección IP del sitio raro: " << sitiosAndIp[sitioRaro] << std::endl;
+  std::cout << "Dirección IP del sitio raro en tiempo constante: " << sitiosAndIp[sitioRaro] << std::endl;
 
   return sitiosAndIp;
 }
@@ -719,7 +720,7 @@ std::map<K, ConexionesComputadora<T>> mapIpAndObjeto(std::vector<T>& bitacora, K
     }
    }
 
-  std::cout << "Computadoras con más de una conexion entrante pertenecientes a reto.com: " << conexionesEntrantes.size() << std::endl;
+  std::cout << "Número de computadoras con más de una conexion entrante pertenecientes a reto.com: " << conexionesEntrantes.size() << std::endl;
 
   return conexionesEntrantes;
     
@@ -752,7 +753,7 @@ void mapIpUnicasConexiones(std::vector<T>& bitacora, K redInterna){
     }
   }
 
-  std::cout << "Map IP que no son server.reto.com ni servidor DHCP " << std::endl;
+  std::cout << "Map IP´s que no son server.reto.com ni servidor DHCP " << std::endl;
 
   for (auto& ip : ipAndObjeto){
     std::cout << ip.first << ": " << ip.second.totalConexionesEntrantes() << std::endl;
@@ -774,7 +775,7 @@ void mapIpUnicasConexiones(std::vector<T>& bitacora, K redInterna){
     ipAndObjeto.erase(it);
   }
   std::cout << std::endl;
-  std::cout << "Ip únicas entrantes a computadoras que no pertenecen a reto.com ni servidor DHCP: " << std::endl;
+  std::cout << "IP´s únicas entrantes a computadoras que no pertenecen a server.reto.com ni servidor DHCP: " << std::endl;
   for (auto& ip : ipUnicas){
     std::cout << ip << std::endl;
   }
@@ -782,6 +783,7 @@ void mapIpUnicasConexiones(std::vector<T>& bitacora, K redInterna){
   std::map<std::string, std::string> sitiosAndIpRaro = mapSitiosAndIp(bitacora);
 
   std::map<K, ConexionesComputadora<T>> conexionesEntrantesSitiosReto = mapIpAndObjeto(bitacora, redInterna);
+  std::vector<T> conexionesConSitioRaro;
 
   for (auto& ip : ipUnicas){
     for (auto& ipReto : conexionesEntrantesSitiosReto){
@@ -790,19 +792,23 @@ void mapIpUnicasConexiones(std::vector<T>& bitacora, K redInterna){
         conexionesSalientes = ipReto.second.getConexionesSalientes();
         while (!conexionesSalientes->empty()){
           auto sitio = conexionesSalientes->first()->getInfo().getIpDestiny();
-          auto fecha = conexionesSalientes->first()->getInfo().getDate();
-          auto puerto = conexionesSalientes->first()->getInfo().getDestinyPort();
-          conexionesSalientes->dequeue();
           if (sitiosAndIpRaro.find(sitio) != sitiosAndIpRaro.end()){
-            std::cout << "La IP de la red interna: " << ip << " se conecto con la IP:  " << sitiosAndIpRaro[sitio] << " que pertenece al sitio: " << sitio << std::endl;
-            std::cout << "siendo la primera conexión el día: " << fecha << std::endl;
-            std::cout << "Mediante el puerto: " << puerto << std::endl;
+            conexionesConSitioRaro.push_back(conexionesSalientes->first()->getInfo());
             break;
           }
+          conexionesSalientes->dequeue();
         }
       }
     }
   }
+
+ std::vector<RegComun> vectorSort = Ordenamiento<RegComun>::insercion(conexionesConSitioRaro, RegComun::compareDateAsc);
+
+ for (auto& conexion : vectorSort){
+   std::cout << "La computadora: " << conexion << " se conecto con: " << conexion.getIpDestiny() << " siendo la primera conexión el día: " << conexion.getDate() << std::endl;
+   std::cout << "Mediante el puerto: " << conexion.getDestinyPort() << std::endl;
+ }
+
   
 }
 
@@ -953,23 +959,12 @@ int main() {
         std::cout << "sitio elegido C: " << sitioC << std::endl;
         grafoSitiosWeb(bitacora, fechas, sitioB, sitioC);
         break;
-    
     case 17:
-      std::cout << "Map sitios y IP" <<std::endl;
-      //mapSitiosAndIp(bitacora, fechas);
-
-      break;
-    case 18:
-      std::cout << "Map ip y conexiones" <<std::endl;
-      red=redInterna(bitacora);
-      //mapIpAndObjeto(bitacora, red);
-      break;
-    case 19:
-      std::cout << "Map ip unicas y conexiones" <<std::endl;
+      std::cout << "Respuesta actividad 5.2" <<std::endl;
       red=redInterna(bitacora);
       mapIpUnicasConexiones(bitacora, red);
       break;
-    case 20:
+    case 18:
         std::cout << "Adios" << std::endl;
         return 0;
     default:

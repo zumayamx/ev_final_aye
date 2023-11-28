@@ -33,9 +33,8 @@
       //os << registro.nameOrigin<<std::endl;
       //os << registro.nameDestiny<<std::endl;
       //os << registro.destinyPort<<std::endl;
-      os << registro.ipOrigin<<std::endl;
+      os << registro.ipOrigin;
       //os << registro.ipDestiny<<std::endl;
-      os << std::endl;
       
       return os;
   }
